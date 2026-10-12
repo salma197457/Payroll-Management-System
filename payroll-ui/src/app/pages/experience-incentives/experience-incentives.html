@@ -1,0 +1,76 @@
+<section class="page">
+  <div class="page-header">
+    <div>
+      <h1>Experience Incentives</h1>
+      <p>Manage incentive percentages based on years of experience.</p>
+    </div>
+
+    <a
+      routerLink="/experience-incentives/create"
+      class="btn btn-primary"
+    >
+      + Create Incentive
+    </a>
+  </div>
+
+  <div class="card">
+    <div class="filters">
+      <input
+        type="text"
+        placeholder="Search by minimum years..."
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+      />
+    </div>
+
+    @if (errorMessage()) {
+      <div class="error-message">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    @if (loading()) {
+      <p>Loading experience incentives...</p>
+    } @else {
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Minimum Years</th>
+              <th>Incentive Percentage</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (incentive of filteredIncentives(); track incentive.id) {
+              <tr>
+                <td>{{ incentive.id }}</td>
+                <td>More than {{ incentive.minimumYears }} years</td>
+                <td>{{ incentive.percentage }}%</td>
+                <td>
+                  <a
+                    [routerLink]="[
+                      '/experience-incentives/edit',
+                      incentive.id
+                    ]"
+                    class="btn btn-edit"
+                  >
+                    Edit Percentage
+                  </a>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="empty-state">
+                  No experience incentives found.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</section>

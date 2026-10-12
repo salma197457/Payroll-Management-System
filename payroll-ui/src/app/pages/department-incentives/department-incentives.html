@@ -1,0 +1,76 @@
+<section class="page">
+  <div class="page-header">
+    <div>
+      <h1>Department Incentives</h1>
+      <p>Manage incentive percentages assigned to departments.</p>
+    </div>
+
+    <a
+      routerLink="/department-incentives/create"
+      class="btn btn-primary"
+    >
+      + Create Incentive
+    </a>
+  </div>
+
+  <div class="card">
+    <div class="filters">
+      <input
+        type="text"
+        placeholder="Search by department name..."
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+      />
+    </div>
+
+    @if (errorMessage()) {
+      <div class="error-message">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    @if (loading()) {
+      <p>Loading department incentives...</p>
+    } @else {
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Department</th>
+              <th>Percentage</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (incentive of filteredIncentives(); track incentive.id) {
+              <tr>
+                <td>{{ incentive.id }}</td>
+                <td>{{ incentive.departmentName }}</td>
+                <td>{{ incentive.percentage }}%</td>
+                <td>
+                  <a
+                    [routerLink]="[
+                      '/department-incentives/edit',
+                      incentive.id
+                    ]"
+                    class="btn btn-edit"
+                  >
+                    Edit Percentage
+                  </a>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="empty-state">
+                  No department incentives found.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</section>  

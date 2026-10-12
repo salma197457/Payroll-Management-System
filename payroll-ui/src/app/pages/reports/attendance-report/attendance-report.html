@@ -1,0 +1,223 @@
+
+<section class="report-page">
+
+  <div class="report-header">
+    <a routerLink="/reports" class="back-link">
+      ← Back to Reports
+    </a>
+
+    <h1>Attendance Report</h1>
+    <p>
+      View each employee's working days, recorded absences,
+      and attendance for a selected period.
+      Working days include weekends.
+    </p>
+  </div>
+
+  <div class="report-card">
+
+    <div class="section-heading">
+      <h2>Report Filters</h2>
+      <p>
+        Select a date range and optionally filter by Employee ID.
+      </p>
+    </div>
+
+    <div class="filters">
+
+      <div class="filter-group">
+        <label for="fromDate">From Date *</label>
+        <input
+          id="fromDate"
+          type="date"
+          [max]="today()"
+          [ngModel]="fromDate()"
+          (ngModelChange)="fromDate.set($event)"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label for="toDate">To Date *</label>
+        <input
+          id="toDate"
+          type="date"
+          [min]="fromDate()"
+          [max]="today()"
+          [ngModel]="toDate()"
+          (ngModelChange)="toDate.set($event)"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label for="employeeId">Employee ID</label>
+        <input
+          id="employeeId"
+          type="number"
+          min="1"
+          step="1"
+          placeholder="All Employees"
+          [ngModel]="selectedEmployeeId()"
+          (ngModelChange)="selectedEmployeeId.set($event)"
+        />
+      </div>
+
+      <div class="filter-actions">
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="loading()"
+          (click)="applyFilters()"
+        >
+          Apply Filters
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          [disabled]="loading()"
+          (click)="resetFilters()"
+        >
+          Reset
+        </button>
+      </div>
+
+    </div>
+
+    @if (errorMessage()) {
+      <div class="error-message">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <div class="results-section">
+
+      <div class="results-header">
+        <div>
+          <h2>Attendance Records</h2>
+          <p>{{ appliedFilters() }}</p>
+        </div>
+
+        <div class="results-actions">
+          <button
+            type="button"
+            class="btn btn-primary print-button"
+            [disabled]="loading() || !hasLoaded()"
+            (click)="printReport()"
+          >
+            Print Current Page
+          </button>
+        </div>
+      </div>
+
+      @if (loading()) {
+        <div class="loading-state">
+          Loading attendance report...
+        </div>
+      } @else if (hasLoaded()) {
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Employee ID</th>
+                <th>Employee Name</th>
+                <th class="number-column">Working Days</th>
+                <th class="number-column">Absence Days</th>
+                <th class="number-column">Attendance Days</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (record of records(); track record.employeeId) {
+                <tr>
+                  <td class="id-cell">
+                    #{{ record.employeeId }}
+                  </td>
+
+                  <td>
+                    <div class="employee-cell">
+                      <div class="employee-avatar">
+                        {{ record.employeeName.charAt(0).toUpperCase() }}
+                      </div>
+                      <span class="employee-name">
+                        {{ record.employeeName }}
+                      </span>
+                    </div>
+                  </td>
+
+                  <td class="number-cell">
+                    {{ record.workingDays }}
+                  </td>
+
+                  <td class="number-cell">
+                    <span
+                      class="absence-tag"
+                      [class.has-absences]="record.absenceDays > 0"
+                    >
+                      {{ record.absenceDays }}
+                    </span>
+                  </td>
+
+                  <td class="number-cell attendance-cell">
+                    {{ record.attendanceDays }}
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="5" class="empty-state">
+                    No attendance records found for the selected filters.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        @if (totalCount() > 0) {
+          <div class="pagination">
+
+            <div class="page-size-control">
+              <label for="pageSize">Rows per page</label>
+              <select
+                id="pageSize"
+                [ngModel]="pageSize()"
+                (ngModelChange)="changePageSize(+$event)"
+                [disabled]="loading()"
+              >
+                <option [ngValue]="10">10</option>
+                <option [ngValue]="20">20</option>
+                <option [ngValue]="50">50</option>
+              </select>
+            </div>
+
+            <div class="pagination-info">
+              Page {{ pageNumber() }} of {{ totalPages() }}
+            </div>
+
+            <div class="pagination-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                [disabled]="pageNumber() <= 1 || loading()"
+                (click)="goToPage(pageNumber() - 1)"
+              >
+                Previous
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-secondary"
+                [disabled]="pageNumber() >= totalPages() || loading()"
+                (click)="goToPage(pageNumber() + 1)"
+              >
+                Next
+              </button>
+            </div>
+
+          </div>
+        }
+      }
+
+    </div>
+  </div>
+</section>

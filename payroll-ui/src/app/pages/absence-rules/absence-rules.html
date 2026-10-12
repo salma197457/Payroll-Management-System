@@ -1,0 +1,70 @@
+<section class="page">
+  <div class="page-header">
+    <div>
+      <h1>Absence Deduction Rules</h1>
+      <p>Manage salary deduction percentages based on absence days.</p>
+    </div>
+
+    <a routerLink="/absence-rules/create" class="btn btn-primary">
+      + Create Rule
+    </a>
+  </div>
+
+  <div class="card">
+    <div class="filters">
+      <input
+        type="text"
+        placeholder="Search by minimum days or type..."
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+      />
+    </div>
+
+    @if (errorMessage()) {
+      <div class="error-message">{{ errorMessage() }}</div>
+    }
+
+    @if (loading()) {
+      <p>Loading absence deduction rules...</p>
+    } @else {
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Minimum Absence Days</th>
+              <th>Type</th>
+              <th>Deduction Percentage</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (rule of filteredRules(); track rule.id) {
+              <tr>
+                <td>{{ rule.id }}</td>
+                <td>{{ rule.minimumDays }}</td>
+                <td>{{ rule.type }}</td>
+                <td>{{ rule.percentage }}%</td>
+                <td>
+                  <a
+                    [routerLink]="['/absence-rules/edit', rule.id]"
+                    class="btn btn-edit"
+                  >
+                    Edit Percentage
+                  </a>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="empty-state">
+                  No absence deduction rules found.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</section>

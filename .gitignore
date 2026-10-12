@@ -1,0 +1,12 @@
+.vs/
+**/bin/
+**/obj/
+**/node_modules/
+**/dist/
+**/.angular/
+**/TestResults/
+**/appsettings.Development.json
+.env
+.env.*
+*.user
+Payroll.UnitTests/

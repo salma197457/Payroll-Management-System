@@ -1,0 +1,163 @@
+
+<section class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Absence Management</h1>
+      <p>View and record employee absence days.</p>
+    </div>
+
+    <a
+      routerLink="/absence-management/create"
+      class="btn btn-primary"
+    >
+      + Record Absence
+    </a>
+  </div>
+
+  <div class="card">
+
+    <!-- Client-side filters -->
+
+    <div class="filters">
+
+      <input
+        type="text"
+        placeholder="Search by Employee ID or Name..."
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+      />
+
+      <input
+        type="date"
+        [ngModel]="selectedDate()"
+        (ngModelChange)="selectedDate.set($event)"
+      />
+
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="clearFilters()"
+      >
+        Clear Filters
+      </button>
+
+    </div>
+
+    @if (errorMessage()) {
+      <div class="error-message">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <!-- Absence records -->
+
+    @if (loading()) {
+
+      <div class="loading-state">
+        Loading absences...
+      </div>
+
+    } @else {
+
+      <div class="table-container">
+
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Employee</th>
+              <th>Absence Date</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            @for (absence of filteredAbsences(); track absence.id) {
+
+              <tr>
+                <td>{{ absence.id }}</td>
+                <td>{{ absence.employeeName }}</td>
+                <td>{{ absence.date }}</td>
+              </tr>
+
+            } @empty {
+
+              <tr>
+                <td colspan="3" class="empty-state">
+                  No employee absences found on this page
+                  matching the selected filters.
+                </td>
+              </tr>
+
+            }
+
+          </tbody>
+        </table>
+
+      </div>
+
+      <!-- Server-side pagination -->
+
+      @if (totalCount() > 0) {
+
+        <div class="pagination">
+
+          <div class="page-size-control">
+
+            <label for="pageSize">
+              Rows per page
+            </label>
+
+            <select
+              id="pageSize"
+              [ngModel]="pageSize()"
+              (ngModelChange)="changePageSize(+$event)"
+            >
+              <option [ngValue]="10">10</option>
+              <option [ngValue]="20">20</option>
+              <option [ngValue]="50">50</option>
+            </select>
+
+          </div>
+
+          <div class="pagination-info">
+            Showing {{ filteredAbsences().length }}
+            matching absence records on this page
+          </div>
+
+          <div class="pagination-actions">
+
+            <button
+              type="button"
+              class="btn btn-secondary"
+              [disabled]="pageNumber() <= 1 || loading()"
+              (click)="goToPage(pageNumber() - 1)"
+            >
+              Previous
+            </button>
+
+            <span class="page-indicator">
+              Page {{ pageNumber() }} of {{ totalPages() }}
+            </span>
+
+            <button
+              type="button"
+              class="btn btn-secondary"
+              [disabled]="pageNumber() >= totalPages() || loading()"
+              (click)="goToPage(pageNumber() + 1)"
+            >
+              Next
+            </button>
+
+          </div>
+
+        </div>
+
+      }
+
+    }
+
+  </div>
+
+</section>

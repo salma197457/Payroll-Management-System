@@ -1,0 +1,107 @@
+<section class="form-page">
+  <div class="form-header">
+    <h1>{{ isEditMode ? 'Edit Employee' : 'Create Employee' }}</h1>
+
+    <a routerLink="/employees" class="back-link">
+      ← Back to Employees
+    </a>
+  </div>
+
+  <div class="form-card">
+    @if (errorMessage()) {
+      <div class="error-message">{{ errorMessage() }}</div>
+    }
+
+    @if (loading()) {
+      <p>Loading employee...</p>
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="save()">
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="name">Full Name *</label>
+            <input id="name" formControlName="name" placeholder="Employee name" />
+          </div>
+
+          <div class="form-group">
+            <label for="birthDate">Birth Date *</label>
+            <input id="birthDate" type="date" formControlName="birthDate" />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input id="email" type="email" formControlName="email" />
+          </div>
+
+          <div class="form-group">
+            <label for="phoneNumber">Phone Number *</label>
+            <input id="phoneNumber" formControlName="phoneNumber" />
+          </div>
+
+          <div class="form-group full-width">
+            <label for="address">Address *</label>
+            <input id="address" formControlName="address" />
+          </div>
+
+          <div class="form-group">
+            <label for="joinDate">Join Date *</label>
+            <input id="joinDate" type="date" formControlName="joinDate" />
+
+            @if (isEditMode) {
+              <small class="field-hint">
+                Join date cannot be changed after creation.
+              </small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="departmentId">Department *</label>
+            <select id="departmentId" formControlName="departmentId">
+              <option [ngValue]="0">Select Department</option>
+
+              @for (department of departments(); track department.id) {
+                <option [ngValue]="department.id">
+                  {{ department.name }}
+                </option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="jobGradeId">Job Grade *</label>
+            <select id="jobGradeId" formControlName="jobGradeId">
+              <option [ngValue]="0">Select Job Grade</option>
+
+              @for (grade of jobGrades(); track grade.id) {
+                <option [ngValue]="grade.id">
+                  {{ grade.name }} — {{ grade.salary.toLocaleString() }}
+                </option>
+              }
+            </select>
+          </div>
+        </div>
+
+        @if (form.invalid && form.touched) {
+          <p class="validation-error">
+            Please complete all required fields with valid values.
+          </p>
+        }
+
+        <div class="form-actions">
+          <a routerLink="/employees" class="btn btn-cancel">
+            Cancel
+          </a>
+
+          <button
+            type="submit"
+            class="btn btn-save"
+            [disabled]="saving() || loading() || form.invalid"
+          >
+            {{ saving() ? 'Saving...' :
+               (isEditMode ? 'Update Employee' : 'Create Employee') }}
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</section>

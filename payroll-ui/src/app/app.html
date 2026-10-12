@@ -1,0 +1,61 @@
+<header class="header">
+  <a routerLink="/" class="brand" (click)="closeMenu()">
+    <span class="brand-icon">▦</span>
+    <span>Payroll</span>
+  </a>
+
+  <button
+    type="button"
+    class="menu-button"
+    (click)="toggleMenu()"
+    aria-label="Toggle navigation menu"
+    [attr.aria-expanded]="menuOpen()"
+  >
+    ☰
+  </button>
+</header>
+
+@if (menuOpen()) {
+  <div class="menu-backdrop" (click)="closeMenu()"></div>
+
+  <nav class="navigation-menu" aria-label="Main navigation">
+    <div class="menu-heading">Navigation</div>
+
+    <a routerLink="/departments" routerLinkActive="active" (click)="closeMenu()">
+      Departments
+    </a>
+
+    <a routerLink="/job-grades" routerLinkActive="active" (click)="closeMenu()">
+      Job Grades
+    </a>
+
+    <a routerLink="/employees" routerLinkActive="active" (click)="closeMenu()">
+      Employees
+    </a>
+
+    <a routerLink="/department-incentives" routerLinkActive="active" (click)="closeMenu()">
+      Department Incentives
+    </a>
+
+    <a routerLink="/experience-incentives" routerLinkActive="active" (click)="closeMenu()">
+      Experience Incentives
+    </a>
+
+    <a routerLink="/absence-rules" routerLinkActive="active" (click)="closeMenu()">
+      Absence Deduction Rules
+    </a>
+
+<a
+  routerLink="/absence-management" routerLinkActive="active" (click)="closeMenu()">
+  Absence Management
+</a>
+
+    <a routerLink="/reports" routerLinkActive="active" (click)="closeMenu()">
+      Reports
+    </a>
+  </nav>
+}
+
+<main class="main-content">
+  <router-outlet />
+</main>

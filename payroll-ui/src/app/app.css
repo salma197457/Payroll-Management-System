@@ -1,0 +1,113 @@
+.header {
+  height: 70px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  position: relative;
+  z-index: 20;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: #1e293b;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.brand-icon {
+  background: #2563eb;
+  color: white;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  font-size: 24px;
+}
+
+.menu-button {
+  background: #f1f5f9;
+  border: none;
+  border-radius: 8px;
+  width: 44px;
+  height: 44px;
+  font-size: 24px;
+  cursor: pointer;
+  color: #334155;
+}
+
+.menu-button:hover {
+  background: #e2e8f0;
+}
+
+.menu-backdrop {
+  position: fixed;
+  inset: 70px 0 0;
+  background: rgba(15, 23, 42, 0.2);
+  z-index: 10;
+}
+
+.navigation-menu {
+  position: fixed;
+  top: 78px;
+  right: 16px;
+  width: 270px;
+  max-width: calc(100vw - 32px);
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.menu-heading {
+  padding: 12px;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+.navigation-menu a {
+  padding: 12px 14px;
+  text-decoration: none;
+  color: #334155;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.navigation-menu a:hover {
+  background: #f1f5f9;
+}
+
+.navigation-menu a.active {
+  background: #eff6ff;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.main-content {
+  padding: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+@media (max-width: 600px) {
+  .header {
+    padding: 0 16px;
+  }
+
+  .main-content {
+    padding: 20px 16px;
+  }
+}

@@ -1,0 +1,255 @@
+
+<section class="report-page">
+
+  <div class="report-header">
+    <a routerLink="/reports" class="back-link">
+      ← Back to Reports
+    </a>
+
+    <h1>Employee Report</h1>
+    <p>
+      View employee details, departments, job grades,
+      and base salary information.
+    </p>
+  </div>
+
+  <div class="report-card">
+
+    <div class="section-heading">
+      <h2>Report Filters</h2>
+      <p>
+        Filter employees by ID, name, department, or job grade.
+      </p>
+    </div>
+
+    <div class="filters">
+
+      <div class="filter-group">
+        <label for="employeeId">Employee ID</label>
+        <input
+          id="employeeId"
+          type="number"
+          min="1"
+          step="1"
+          placeholder="All Employees"
+          [ngModel]="selectedEmployeeId()"
+          (ngModelChange)="selectedEmployeeId.set($event)"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label for="employeeName">Employee Name</label>
+        <input
+          id="employeeName"
+          type="text"
+          placeholder="Search by name"
+          [ngModel]="selectedEmployeeName()"
+          (ngModelChange)="selectedEmployeeName.set($event)"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label for="department">Department</label>
+
+        <select
+          id="department"
+          [ngModel]="selectedDepartmentId()"
+          (ngModelChange)="selectedDepartmentId.set(+$event)"
+        >
+          <option [ngValue]="0">All Departments</option>
+
+          @for (department of departments(); track department.id) {
+            <option [ngValue]="department.id">
+              {{ department.name }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="jobGrade">Job Grade</label>
+
+        <select
+          id="jobGrade"
+          [ngModel]="selectedJobGradeId()"
+          (ngModelChange)="selectedJobGradeId.set(+$event)"
+        >
+          <option [ngValue]="0">All Job Grades</option>
+
+          @for (grade of jobGrades(); track grade.id) {
+            <option [ngValue]="grade.id">
+              {{ grade.name }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-actions">
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="loading()"
+          (click)="applyFilters()"
+        >
+          Apply Filters
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          [disabled]="loading()"
+          (click)="resetFilters()"
+        >
+          Reset
+        </button>
+      </div>
+
+    </div>
+
+    @if (errorMessage()) {
+      <div class="error-message">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <div class="results-section">
+
+      <div class="results-header">
+        <div>
+          <h2>Employee Records</h2>
+          <p>{{ appliedFilters() }}</p>
+        </div>
+
+        <div class="results-actions">
+
+          <div class="total-badge">
+            <span>Total Employees</span>
+            <strong>{{ totalCount() }}</strong>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-primary print-button"
+            [disabled]="loading() || !hasLoaded() || employees().length === 0"
+            (click)="printReport()"
+          >
+            Print Current Page
+          </button>
+
+        </div>
+      </div>
+
+      @if (loading()) {
+        <div class="loading-state">
+          Loading employee report...
+        </div>
+      } @else if (hasLoaded()) {
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Employee ID</th>
+                <th>Employee Name</th>
+                <th>Department</th>
+                <th>Job Grade</th>
+                <th class="salary-column">Base Salary</th>
+                <th>Join Date</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (employee of employees(); track employee.employeeId) {
+                <tr>
+                  <td class="id-cell">
+                    #{{ employee.employeeId }}
+                  </td>
+
+                  <td>
+                    <div class="employee-cell">
+                      <div class="employee-avatar">
+                        {{ employee.employeeName.charAt(0).toUpperCase() }}
+                      </div>
+
+                      <span class="employee-name">
+                        {{ employee.employeeName }}
+                      </span>
+                    </div>
+                  </td>
+
+                  <td>
+                    <span class="department-tag">
+                      {{ employee.departmentName }}
+                    </span>
+                  </td>
+
+                  <td>{{ employee.jobGradeName }}</td>
+
+                  <td class="salary-cell">
+                    {{ employee.baseSalary.toLocaleString() }}
+                  </td>
+
+                  <td class="date-cell">
+                    {{ employee.joinDate }}
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="6" class="empty-state">
+                    No employees found for the selected filters.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        @if (totalCount() > 0) {
+          <div class="pagination">
+
+            <div class="page-size-control">
+              <label for="pageSize">Rows per page</label>
+
+              <select
+                id="pageSize"
+                [ngModel]="pageSize()"
+                (ngModelChange)="changePageSize(+$event)"
+                [disabled]="loading()"
+              >
+                <option [ngValue]="10">10</option>
+                <option [ngValue]="20">20</option>
+                <option [ngValue]="50">50</option>
+              </select>
+            </div>
+
+            <div class="pagination-info">
+              Page {{ pageNumber() }} of {{ totalPages() }}
+            </div>
+
+            <div class="pagination-actions">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                [disabled]="pageNumber() <= 1 || loading()"
+                (click)="goToPage(pageNumber() - 1)"
+              >
+                Previous
+              </button>
+
+              <button
+                type="button"
+                class="btn btn-secondary"
+                [disabled]="pageNumber() >= totalPages() || loading()"
+                (click)="goToPage(pageNumber() + 1)"
+              >
+                Next
+              </button>
+            </div>
+
+          </div>
+        }
+      }
+
+    </div>
+  </div>
+</section>

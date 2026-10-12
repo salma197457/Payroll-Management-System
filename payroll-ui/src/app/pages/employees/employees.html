@@ -1,0 +1,203 @@
+
+<section class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Employees</h1>
+      <p>Manage active employees and their information.</p>
+    </div>
+
+    <a routerLink="/employees/create" class="btn btn-primary">
+      + Create Employee
+    </a>
+  </div>
+
+  <div class="card">
+
+    <!-- Client-side filters -->
+
+    <div class="filters">
+
+      <input
+        type="text"
+        placeholder="Search by name or email..."
+        [ngModel]="searchTerm()"
+        (ngModelChange)="updateSearch($event)"
+      />
+
+      <select
+        [ngModel]="selectedDepartmentId()"
+        (ngModelChange)="updateDepartment(+$event)"
+      >
+        <option [ngValue]="0">All Departments</option>
+
+        @for (department of departments(); track department.id) {
+          <option [ngValue]="department.id">
+            {{ department.name }}
+          </option>
+        }
+      </select>
+
+      <select
+        [ngModel]="selectedJobGradeId()"
+        (ngModelChange)="updateJobGrade(+$event)"
+      >
+        <option [ngValue]="0">All Job Grades</option>
+
+        @for (grade of jobGrades(); track grade.id) {
+          <option [ngValue]="grade.id">
+            {{ grade.name }}
+          </option>
+        }
+      </select>
+
+    </div>
+
+    @if (errorMessage()) {
+      <div class="error-message">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <!-- Employee table -->
+
+    @if (loading()) {
+
+      <div class="loading-state">
+        Loading employees...
+      </div>
+
+    } @else {
+
+      <div class="table-container">
+
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Phone</th>
+              <th>Department</th>
+              <th>Job Grade</th>
+              <th>Base Salary</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            @for (employee of filteredEmployees(); track employee.id) {
+
+              <tr>
+                <td>{{ employee.id }}</td>
+                <td>{{ employee.name }}</td>
+                <td>{{ employee.email }}</td>
+                <td>{{ employee.phoneNumber }}</td>
+                <td>{{ employee.departmentName }}</td>
+                <td>{{ employee.jobGradeName }}</td>
+
+                <td>
+                  {{ employee.baseSalary.toLocaleString() }}
+                </td>
+
+                <td>
+                  <div class="actions">
+
+                    <a
+                      [routerLink]="['/employees/edit', employee.id]"
+                      class="btn btn-edit"
+                    >
+                      Edit
+                    </a>
+
+                    <button
+                      type="button"
+                      class="btn btn-delete"
+                      (click)="deleteEmployee(employee)"
+                    >
+                      Delete
+                    </button>
+
+                  </div>
+                </td>
+              </tr>
+
+            } @empty {
+
+              <tr>
+                <td colspan="8" class="empty-state">
+                  No employees found on this page
+                  matching the selected filters.
+                </td>
+              </tr>
+
+            }
+
+          </tbody>
+        </table>
+
+      </div>
+
+      <!-- Server-side pagination -->
+
+      @if (totalCount() > 0) {
+
+        <div class="pagination">
+
+          <div class="page-size-control">
+            <label for="pageSize">
+              Rows per page
+            </label>
+
+            <select
+              id="pageSize"
+              [ngModel]="pageSize()"
+              (ngModelChange)="changePageSize(+$event)"
+            >
+              <option [ngValue]="10">10</option>
+              <option [ngValue]="20">20</option>
+              <option [ngValue]="50">50</option>
+            </select>
+          </div>
+
+          <div class="pagination-info">
+            Showing {{ filteredEmployees().length }}
+            matching employees on this page
+          </div>
+
+          <div class="pagination-actions">
+
+            <button
+              type="button"
+              class="btn btn-secondary"
+              [disabled]="pageNumber() <= 1"
+              (click)="goToPage(pageNumber() - 1)"
+            >
+              Previous
+            </button>
+
+            <span class="page-indicator">
+              Page {{ pageNumber() }} of {{ totalPages() }}
+            </span>
+
+            <button
+              type="button"
+              class="btn btn-secondary"
+              [disabled]="pageNumber() >= totalPages()"
+              (click)="goToPage(pageNumber() + 1)"
+            >
+              Next
+            </button>
+
+          </div>
+
+        </div>
+
+      }
+
+    }
+
+  </div>
+
+</section>

@@ -1,0 +1,276 @@
+
+<section class="report-page">
+
+  <div class="report-header">
+    <a routerLink="/reports" class="back-link">
+      ← Back to Reports
+    </a>
+
+    <h1>Salary Report</h1>
+    <p>
+      Review employee payroll calculations, incentives,
+      deductions, and net salaries.
+    </p>
+  </div>
+
+  <div class="report-card">
+
+    <div class="section-heading">
+      <h2>Report Filters</h2>
+      <p>
+        Filter payroll records by year, month, or employee ID.
+      </p>
+    </div>
+
+    <div class="filters">
+
+      <div class="filter-group">
+        <label for="year">Year</label>
+
+        <input
+          id="year"
+          type="number"
+          min="1"
+          max="9999"
+          step="1"
+          placeholder="All Years"
+          [ngModel]="selectedYear()"
+          (ngModelChange)="selectedYear.set($event)"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label for="month">Month</label>
+
+        <select
+          id="month"
+          [ngModel]="selectedMonth()"
+          (ngModelChange)="selectedMonth.set(+$event)"
+        >
+          <option [ngValue]="0">All Months</option>
+
+          @for (month of months; track month.value) {
+            <option [ngValue]="month.value">
+              {{ month.name }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="employeeId">Employee ID</label>
+
+        <input
+          id="employeeId"
+          type="number"
+          min="1"
+          step="1"
+          placeholder="Enter Employee ID"
+          [ngModel]="selectedEmployeeId()"
+          (ngModelChange)="selectedEmployeeId.set($event)"
+        />
+      </div>
+
+      <div class="filter-actions">
+        <button
+          type="button"
+          class="btn btn-primary"
+          [disabled]="loading()"
+          (click)="applyFilters()"
+        >
+          Apply Filters
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-secondary"
+          [disabled]="loading()"
+          (click)="resetFilters()"
+        >
+          Reset
+        </button>
+      </div>
+
+    </div>
+
+    @if (errorMessage()) {
+      <div class="error-message">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <div class="results-section">
+
+      <div class="results-header">
+
+        <div>
+          <h2>Salary Records</h2>
+          <p>{{ appliedFilters() }}</p>
+        </div>
+
+        <div class="results-actions">
+
+          <div class="total-badge">
+            <span>Total Records</span>
+            <strong>{{ totalCount() }}</strong>
+          </div>
+
+          <button
+            type="button"
+            class="btn btn-primary print-button"
+            [disabled]="loading() || !!errorMessage() || !hasLoaded()"
+            (click)="printReport()"
+          >
+            Print Current Page
+          </button>
+
+        </div>
+      </div>
+
+      @if (loading()) {
+        <div class="loading-state">
+          Loading salary report...
+        </div>
+      } @else {
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Employee</th>
+                <th>Period</th>
+                <th class="number-column">Base Salary</th>
+                <th class="number-column">Department Incentive</th>
+                <th class="number-column">Experience Incentive</th>
+                <th class="number-column">Attendance Incentive</th>
+                <th class="number-column">Total Incentives</th>
+                <th class="number-column">Absence Deduction</th>
+                <th class="number-column">Total Deductions</th>
+                <th class="number-column">Net Salary</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (record of records(); track record.payrollId) {
+                <tr>
+
+                  <td>
+                    <div class="employee-cell">
+
+                      <div class="employee-avatar">
+                        {{ record.employeeName.charAt(0).toUpperCase() }}
+                      </div>
+
+                      <div class="employee-info">
+                        <span class="employee-name">
+                          {{ record.employeeName }}
+                        </span>
+
+                        <small>#{{ record.employeeId }}</small>
+                      </div>
+
+                    </div>
+                  </td>
+
+                  <td class="period-cell">
+                    {{ record.month.toString().padStart(2, '0') }}/{{ record.year }}
+                  </td>
+
+                  <td class="number-cell">
+                    {{ record.baseSalary.toLocaleString() }}
+                  </td>
+
+                  <td class="number-cell">
+                    {{ record.departmentIncentive.toLocaleString() }}
+                  </td>
+
+                  <td class="number-cell">
+                    {{ record.experienceIncentive.toLocaleString() }}
+                  </td>
+
+                  <td class="number-cell">
+                    {{ record.attendanceIncentive.toLocaleString() }}
+                  </td>
+
+                  <td class="number-cell total-incentives-cell">
+                    {{ record.totalIncentives.toLocaleString() }}
+                  </td>
+
+                  <td class="number-cell deduction-cell">
+                    {{ record.absenceDeduction.toLocaleString() }}
+                  </td>
+
+                  <td class="number-cell total-deductions-cell">
+                    {{ record.totalDeductions.toLocaleString() }}
+                  </td>
+
+                  <td class="number-cell net-salary-cell">
+                    {{ record.netSalary.toLocaleString() }}
+                  </td>
+
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="10" class="empty-state">
+                    No salary records found for the selected filters.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pagination">
+
+          <div class="pagination-info">
+            Showing page {{ pageNumber() }} of {{ totalPages() || 1 }}
+            <span class="pagination-total">
+              ({{ totalCount() }} total records)
+            </span>
+          </div>
+
+          <div class="pagination-controls">
+
+            <label for="pageSize">Rows per page:</label>
+
+            <select
+              id="pageSize"
+              [ngModel]="pageSize()"
+              (ngModelChange)="changePageSize(+$event)"
+              [disabled]="loading()"
+            >
+              <option [ngValue]="10">10</option>
+              <option [ngValue]="20">20</option>
+              <option [ngValue]="50">50</option>
+            </select>
+
+            <button
+              type="button"
+              class="btn btn-secondary"
+              [disabled]="pageNumber() <= 1 || loading()"
+              (click)="goToPage(pageNumber() - 1)"
+            >
+              Previous
+            </button>
+
+            <span class="page-indicator">
+              {{ pageNumber() }} / {{ totalPages() || 1 }}
+            </span>
+
+            <button
+              type="button"
+              class="btn btn-secondary"
+              [disabled]="pageNumber() >= totalPages() || loading()"
+              (click)="goToPage(pageNumber() + 1)"
+            >
+              Next
+            </button>
+
+          </div>
+        </div>
+
+      }
+
+    </div>
+  </div>
+</section>

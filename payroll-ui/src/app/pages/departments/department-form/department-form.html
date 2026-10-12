@@ -1,0 +1,53 @@
+<section class="form-page">
+  <div class="form-header">
+    <h1>
+      {{ isEditMode ? 'Edit Department' : 'Create Department' }}
+    </h1>
+
+    <a routerLink="/departments" class="back-link">
+      ← Back to Departments
+    </a>
+  </div>
+
+  <div class="form-card">
+    @if (errorMessage()) {
+      <div class="error-message">{{ errorMessage() }}</div>
+    }
+
+    @if (loading()) {
+      <p>Loading department...</p>
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="form-group">
+          <label for="name">Department Name *</label>
+
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            placeholder="Enter department name"
+          />
+
+          @if (form.controls.name.touched && form.controls.name.invalid) {
+            <small class="validation-error">
+              Department name is required (maximum 100 characters).
+            </small>
+          }
+        </div>
+
+        <div class="form-actions">
+          <a routerLink="/departments" class="btn btn-cancel">
+            Cancel
+          </a>
+
+          <button
+            type="submit"
+            class="btn btn-save"
+            [disabled]="saving() || form.invalid">
+            {{ saving() ? 'Saving...' : 'Save Department' }}
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</section>

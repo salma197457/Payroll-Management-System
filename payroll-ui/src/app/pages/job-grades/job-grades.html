@@ -1,0 +1,67 @@
+<section class="page">
+  <div class="page-header">
+    <div>
+      <h1>Job Grades</h1>
+      <p>Manage job grades and their base salaries.</p>
+    </div>
+
+    <a routerLink="/job-grades/create" class="btn btn-primary">
+      + Create Job Grade
+    </a>
+  </div>
+
+  <div class="card">
+    <div class="filters">
+      <input
+        type="text"
+        placeholder="Search by job grade name..."
+        [ngModel]="searchTerm()"
+        (ngModelChange)="searchTerm.set($event)"
+      />
+    </div>
+
+    @if (errorMessage()) {
+      <div class="error-message">{{ errorMessage() }}</div>
+    }
+
+    @if (loading()) {
+      <p>Loading job grades...</p>
+    } @else {
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Job Grade</th>
+              <th>Base Salary</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (grade of filteredJobGrades(); track grade.id) {
+              <tr>
+                <td>{{ grade.id }}</td>
+                <td>{{ grade.name }}</td>
+                <td>{{ grade.salary.toLocaleString() }}</td>
+                <td>
+                  <a
+                    [routerLink]="['/job-grades/edit', grade.id]"
+                    class="btn btn-edit">
+                    Edit Salary
+                  </a>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="empty-state">
+                  No job grades found.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</section>

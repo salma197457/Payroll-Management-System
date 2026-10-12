@@ -1,0 +1,60 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f8fafc;
+  color: #1e293b;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+/* Fit wide reports on landscape pages */
+
+@media print {
+  .report-page table {
+    min-width: 0 !important;
+    width: 100% !important;
+    font-size: 8px;
+  }
+.pagination {
+    display: none !important;
+  }
+  .report-page th,
+  .report-page td {
+    padding: 6px 4px;
+    overflow-wrap: anywhere;
+  }
+
+  .report-page .employee-cell {
+    min-width: 0;
+  }
+
+  .report-page .number-cell {
+    white-space: nowrap;
+  }
+
+  .report-page .table-container {
+    overflow: visible !important;
+  }
+
+  .salary-summary {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    break-inside: avoid;
+  }
+
+  .salary-summary .summary-item {
+    padding: 10px;
+  }
+
+  .salary-summary .summary-item strong {
+    font-size: 14px;
+  }
+} 

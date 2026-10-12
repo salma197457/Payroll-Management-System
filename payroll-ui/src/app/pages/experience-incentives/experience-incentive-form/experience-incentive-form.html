@@ -1,0 +1,96 @@
+<section class="form-page">
+  <div class="form-header">
+    <h1>
+      {{ isEditMode ? 'Edit Experience Incentive' : 'Create Experience Incentive' }}
+    </h1>
+
+    <a routerLink="/experience-incentives" class="back-link">
+      ← Back to Experience Incentives
+    </a>
+  </div>
+
+  <div class="form-card">
+    @if (errorMessage()) {
+      <div class="error-message">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    @if (loading()) {
+      <p>Loading experience incentive...</p>
+    } @else {
+      <form [formGroup]="form" (ngSubmit)="save()">
+
+        <div class="form-group">
+          <label for="minimumYears">Minimum Years of Experience *</label>
+
+          <input
+            id="minimumYears"
+            type="number"
+            min="0"
+            step="1"
+            formControlName="minimumYears"
+            placeholder="Enter minimum years"
+          />
+
+          @if (isEditMode) {
+            <small class="field-hint">
+              Minimum years cannot be changed after creation.
+            </small>
+          }
+
+          @if (
+            form.controls.minimumYears.touched &&
+            form.controls.minimumYears.invalid
+          ) {
+            <small class="validation-error">
+              Enter a valid non-negative whole number.
+            </small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="percentage">Incentive Percentage (%) *</label>
+
+          <input
+            id="percentage"
+            type="number"
+            min="0"
+            max="100"
+            step="0.01"
+            formControlName="percentage"
+            placeholder="Enter incentive percentage"
+          />
+
+          @if (
+            form.controls.percentage.touched &&
+            form.controls.percentage.invalid
+          ) {
+            <small class="validation-error">
+              Percentage must be between 0 and 100.
+            </small>
+          }
+        </div>
+
+        <div class="form-actions">
+          <a routerLink="/experience-incentives" class="btn btn-cancel">
+            Cancel
+          </a>
+
+          <button
+            type="submit"
+            class="btn btn-save"
+            [disabled]="saving() || loading() || form.invalid"
+          >
+            {{
+              saving()
+                ? 'Saving...'
+                : (isEditMode ? 'Update Percentage' : 'Create Incentive')
+            }}
+          </button>
+        </div>
+
+      </form>
+    }
+  </div>
+</section>
